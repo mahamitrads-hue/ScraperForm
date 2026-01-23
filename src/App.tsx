@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ScraperForm from './components/ScraperForm';
 import DataTable from './components/DataTable';
+import Login from './components/Login';
+import { validateCredentials, isAuthenticated as getAuth, setAuthenticated } from './auth';
 
 interface DataRow {
   SchoolName: string;
@@ -23,6 +25,27 @@ function App() {
   const [industry, setIndustry] = useState('');
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailSuccess, setEmailSuccess] = useState(false);
+  const [authed, setAuthed] = useState<boolean>(getAuth());
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setAuthed(getAuth());
+  }, []);
+
+  const handleLogin = (email: string, password: string) => {
+    if (validateCredentials(email, password)) {
+      setAuthenticated(true);
+      setAuthed(true);
+      setLoginError(null);
+    } else {
+      setLoginError('Invalid credentials');
+    }
+  };
+
+  const handleLogout = () => {
+    setAuthenticated(false);
+    setAuthed(false);
+  };
 
   const handleSendEmail = async () => {
     if (data.length === 0) return;
@@ -122,12 +145,24 @@ function App() {
     }
   };
 
+  if (!authed) {
+    return <Login onLogin={handleLogin} error={loginError} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Data Scraper</h1>
-          <p className="text-gray-600">Extract business data by industry and location</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold text-gray-900 mb-1">Data Scraper</h1>
+            <p className="text-gray-600">Extract business data by industry and location</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="ml-4 bg-gray-900 text-white rounded-lg px-4 py-2 font-semibold hover:bg-gray-800"
+          >
+            Logout
+          </button>
         </div>
 
         <ScraperForm onSubmit={handleSubmit} isLoading={isLoading} loadingMessage={loadingMessage} />
