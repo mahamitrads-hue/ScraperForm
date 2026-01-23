@@ -154,7 +154,7 @@ function App() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 flex items-center justify-between">
           <div className="text-center flex-1">
-            <h1 className="text-4xl font-bold text-gray-900 mb-1">Data Scraper</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-1">Guruji- The Data Master</h1>
             <p className="text-gray-600">Extract business data by industry and location</p>
           </div>
           <button
